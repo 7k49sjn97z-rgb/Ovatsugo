@@ -51,3 +51,7 @@ A rede deste ambiente bloqueou a Receita Federal e `binaries.prisma.sh` durante 
 ## Auditoria de dependências
 
 `npm audit` identificou avisos em dependências de build (Tailwind/Prisma), no PostCSS transitivo do Next e no uuid transitivo do ExcelJS. Correções restantes exigem análise e/ou atualização principal. O leitor XLSX anterior foi substituído por ExcelJS; a aplicação não é considerada aprovada para produção.
+
+## Hospedagem gratuita para testes
+
+Veja [Vercel + Neon](docs/vercel-neon.md). `vercel.json` configura geração do cliente, migrations e build. Use banco separado por ambiente; confira limites e condições dos planos gratuitos. Deploy remoto ainda não validado.

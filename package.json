@@ -11,7 +11,8 @@
     "test:e2e": "playwright test",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
     "db:generate": "prisma generate",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:vercel": "npm run db:generate && npm run db:migrate && npm run build"
   },
   "repository": {
     "type": "git",
@@ -60,6 +61,6 @@
     "vitest": "^5.0.5"
   },
   "engines": {
-    "node": ">=22.9.0 <25"
+    "node": "22.x"
   }
 }
