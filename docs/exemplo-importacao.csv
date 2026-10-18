@@ -1,0 +1,2 @@
+ticker,side,quantity,price,fees,date,broker,assetClass,modality
+PETR4,BUY,10,30.50,2.00,2025-01-10,Corretora Fictícia,ACAO,COMUM

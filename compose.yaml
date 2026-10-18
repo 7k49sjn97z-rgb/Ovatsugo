@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: pipo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Defina POSTGRES_PASSWORD para o banco local}
+      POSTGRES_DB: pipo
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pipo_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pipo -d pipo"]
+      interval: 5s
+      retries: 10
+volumes:
+  pipo_data:

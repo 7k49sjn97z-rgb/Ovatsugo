@@ -1,0 +1,2 @@
+import {NextResponse} from "next/server";import {userId} from "@/lib/auth";import {db} from "@/lib/db";
+export async function GET(){try{const uid=await userId();const u=await db.user.findUniqueOrThrow({where:{id:uid},select:{name:true,email:true}});const audit=await db.auditLog.findMany({where:{userId:uid},orderBy:{createdAt:"desc"},take:30,select:{action:true,entityId:true,createdAt:true}});return NextResponse.json({...u,audit});}catch{return NextResponse.json({error:"Entre para continuar"},{status:401});}}

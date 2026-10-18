@@ -1,0 +1,140 @@
+generator client {
+ provider = "prisma-client-js"
+ engineType = "client"
+}
+datasource db {
+ provider = "postgresql"
+ url = env("DATABASE_URL")
+}
+model User {
+ id String @id @default(cuid())
+ email String @unique
+ password String
+ name String
+ createdAt DateTime @default(now())
+ operations Operation[]
+ audits AuditLog[]
+ portfolios Portfolio[]
+}
+model Portfolio {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields: [userId], references: [id])
+ name String
+}
+model Operation {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields: [userId], references: [id])
+ ticker String
+ assetClass String @default("ACAO")
+ side String
+ quantity Decimal @db.Decimal(28,10)
+ price Decimal @db.Decimal(28,10)
+ fees Decimal @db.Decimal(28,10)
+ date DateTime @db.Date
+ broker String @default("")
+ modality String @default("COMUM")
+ canceled Boolean @default(false)
+ createdAt DateTime @default(now())
+ updatedAt DateTime @updatedAt
+ @@index([userId, date])
+}
+model AuditLog {
+ id String @id @default(cuid())
+ userId String
+ user User @relation(fields: [userId], references: [id])
+ action String
+ entityId String
+ payload Json
+ createdAt DateTime @default(now())
+ @@index([userId, createdAt])
+}
+model Institution {
+ id String @id @default(cuid())
+ userId String
+ name String
+}
+model Asset {
+ id String @id @default(cuid())
+ ticker String @unique
+ assetClass String
+ cnpj String?
+}
+model OperationalCost {
+ id String @id @default(cuid())
+ userId String
+ operationId String
+ amount Decimal @db.Decimal(28,10)
+}
+model CorporateEvent {
+ id String @id @default(cuid())
+ userId String
+ ticker String
+ date DateTime @db.Date
+ type String
+ ratio Decimal @db.Decimal(28,10)
+}
+model Income {
+ id String @id @default(cuid())
+ userId String
+ ticker String
+ date DateTime @db.Date
+ amount Decimal @db.Decimal(28,10)
+ documentId String?
+}
+model Quote {
+ id String @id @default(cuid())
+ ticker String
+ date DateTime
+ price Decimal @db.Decimal(28,10)
+}
+model TaxYear {
+ id String @id @default(cuid())
+ exercise Int @unique
+ calendarYear Int
+ validated Boolean @default(false)
+}
+model TaxRuleVersion {
+ id String @id @default(cuid())
+ exercise Int
+ source String
+ rules Json
+ validated Boolean @default(false)
+}
+model TaxAssessment {
+ id String @id @default(cuid())
+ userId String
+ exercise Int
+ month Int
+ data Json
+}
+model DeclarationItem {
+ id String @id @default(cuid())
+ userId String
+ exercise Int
+ data Json
+}
+model CarriedLoss {
+ id String @id @default(cuid())
+ userId String
+ exercise Int
+ modality String
+ assetClass String
+ amount Decimal @db.Decimal(28,10)
+}
+model ImportedDocument {
+ id String @id @default(cuid())
+ userId String
+ hash String
+ name String
+ createdAt DateTime @default(now())
+ @@unique([userId, hash])
+}
+model ReconciliationIssue {
+ id String @id @default(cuid())
+ userId String
+ operationId String?
+ type String
+ resolved Boolean @default(false)
+}

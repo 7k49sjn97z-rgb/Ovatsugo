@@ -1,0 +1,26 @@
+# Ambiente de teste. Os planos abaixo podem gerar cobranca; revise antes de criar.
+services:
+  - type: web
+    name: pipo-invest
+    runtime: node
+    plan: starter
+    buildCommand: npm ci --include=dev && npm run db:generate && npm run build
+    preDeployCommand: npm run db:migrate
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 22.16.0
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pipo-invest-db
+          property: connectionString
+databases:
+  - name: pipo-invest-db
+    databaseName: pipo
+    user: pipo
+    plan: basic-256mb
