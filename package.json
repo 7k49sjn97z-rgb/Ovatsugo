@@ -5,14 +5,17 @@
   "main": "index.js",
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start --hostname 0.0.0.0",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "db:migrate": "node --env-file-if-exists=.env --import tsx scripts/migrate.ts",
     "db:generate": "prisma generate",
     "typecheck": "tsc --noEmit",
-    "build:vercel": "npm run db:generate && npm run db:migrate && npm run build"
+    "build:vercel": "npm run config:check && npm run db:generate && npm run db:migrate && npm run db:check && npm run build",
+    "config:check": "node --env-file-if-exists=.env --import tsx scripts/check-config.ts",
+    "db:check": "node --env-file-if-exists=.env --import tsx scripts/check-database.ts",
+    "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"e2e/**/*.ts\" \"scripts/**/*.ts\" \"*.{ts,js,json}\""
   },
   "repository": {
     "type": "git",
@@ -21,14 +24,14 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "bugs": {
     "url": "https://github.com/7k49sjn97z-rgb/Ovatsugo/issues"
   },
   "homepage": "https://github.com/7k49sjn97z-rgb/Ovatsugo#readme",
   "dependencies": {
-    "@prisma/adapter-pg": "^6.19.3",
-    "@prisma/client": "^6.19.3",
+    "@prisma/adapter-pg": "^7.10.1",
+    "@prisma/client": "^7.10.1",
     "@radix-ui/react-slot": "^1.5.0",
     "bcryptjs": "^3.0.3",
     "clsx": "^2.1.1",
@@ -36,7 +39,7 @@
     "exceljs": "^4.4.0",
     "jose": "^6.2.12",
     "lucide-react": "^1.59.0",
-    "next": "^15.5.28",
+    "next": "^16.4.2",
     "papaparse": "^5.7.0",
     "pg": "^8.23.1",
     "react": "^19.3.1",
@@ -47,20 +50,28 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",
+    "@tailwindcss/postcss": "^4.3.3",
     "@types/node": "^26.6.5",
     "@types/papaparse": "^5.5.2",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "autoprefixer": "^10.6.1",
+    "dotenv": "^18.0.8",
     "postcss": "^8.5.31",
-    "prisma": "^6.19.3",
-    "tailwindcss": "^3.4.19",
+    "prettier": "^3.6.2",
+    "prisma": "^7.10.1",
+    "tailwindcss": "^4.3.3",
     "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "vitest": "^5.0.5"
   },
   "engines": {
     "node": "22.x"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "11.1.1"
+    }
   }
 }

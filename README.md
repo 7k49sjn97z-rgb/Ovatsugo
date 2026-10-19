@@ -1,16 +1,16 @@
 # PIPO INVEST
 
-Primeira versão incremental de controle de investimentos de pessoas físicas. Interface em português, BRL, Next.js 15, React 19, TypeScript, Tailwind, botão baseado em Radix (padrão shadcn), Lucide, Recharts, PostgreSQL e Prisma com adaptador `pg`.
+Primeira versão incremental de controle de investimentos de pessoas físicas. Interface em português, BRL, Next.js 16, React 19, TypeScript, Tailwind 4, botão baseado em Radix (padrão shadcn), Lucide, Recharts, PostgreSQL e Prisma 7 com adaptador `pg`.
 
 ## Instalação
 
-Requisitos: Node 22 ou 24, npm, PostgreSQL 17 (ou Docker). Não crie worktrees para executar o projeto.
+Requisitos: Node 22 (22.12 ou superior; Vercel usa 22.x), npm, PostgreSQL 17 (ou Docker). Não crie worktrees para executar o projeto.
 
 1. `npm ci --cache /tmp/pipo-npm`
 2. Copie `.env.example` para `.env`. Defina `DATABASE_URL` e gere `SESSION_SECRET` com pelo menos 32 caracteres aleatórios. Não use a senha local de exemplo em produção.
 3. Defina `POSTGRES_PASSWORD` no shell ou em `.env` e suba PostgreSQL com `docker compose up -d db` (ou use uma instância existente).
-4. `npm run db:generate`. Precisa de acesso HTTPS a `binaries.prisma.sh`, incluindo os checksums. Não desative verificações. O cliente gerado usa `engineType=client`, com adaptador PostgreSQL e sem motor nativo em execução.
-5. `npm run db:migrate`. Runner transacional próprio com lock e checksum; não misture com `prisma migrate deploy`, que usa outro controle de migrations.
+4. `npm run config:check` e `npm run db:generate`. A geração foi validada com Prisma 7, `engineType=client` e adaptador PostgreSQL, sem motor nativo em execução. Não desative verificações de instalação ou TLS. A chave pública de exemplo em `.env.example` é rejeitada; use um segredo aleatório próprio.
+5. `npm run db:migrate` e `npm run db:check`. Runner transacional próprio com lock e checksum; não misture com `prisma migrate deploy`, que usa outro controle de migrations.
 6. `npm run dev`. Crie sua própria conta na tela inicial.
 
 Não existem dados de demonstração carregados. Os dados fictícios estão somente em testes e em `docs/exemplo-importacao.csv`.
@@ -19,7 +19,7 @@ Não existem dados de demonstração carregados. Os dados fictícios estão some
 
 - `npm test`: testes unitários financeiros e do parser.
 - `npm run typecheck` e `npm run build`.
-- `npm run test:e2e`: PostgreSQL em execução; Chromium em `/usr/bin/chromium`, ou defina `CHROMIUM_PATH`. Cria contas fictícias únicas no banco de teste configurado por `.env`; use banco separado antes de rodar contra dados reais.
+- `npm run test:e2e`: PostgreSQL em execução; Chromium em `/usr/bin/chromium`, ou defina `CHROMIUM_PATH`. Usa porta 3100 sem reutilizar outro servidor. Cria contas fictícias únicas no banco configurado por `.env` ou `DATABASE_URL` injetada; use banco separado antes de rodar contra dados reais.
 - Produção: `npm run build && npm start`, HTTPS obrigatório para cookie seguro.
 
 ## Implementado
@@ -31,7 +31,7 @@ Não existem dados de demonstração carregados. Os dados fictícios estão some
 - Custo médio ponderado, taxas, venda parcial/total, resultado realizado e posição histórica com Decimal.js.
 - Dashboard persistido, gráficos por custo, estados vazios, tema escuro, layout responsivo.
 - IR auxiliar por exercício: custo de encerramento, origem das operações, cópia e impressão para PDF pelo navegador.
-- CSV/XLSX: mapeamento, prévia, validação, confirmação, relatório por linha; exportação de operações. Importação parcial e sequencial, até 500 linhas / 2 MB.
+- CSV/XLSX: mapeamento, prévia, validação, confirmação, relatório por linha; exportação de operações. Importação parcial, cronológica e sequencial, até 500 linhas / 2 MB.
 - Conciliação de instituição ausente e operações no mesmo dia; duplicidade/saldo negativo bloqueados na gravação.
 - Modelo inicial para as entidades solicitadas; módulos futuros ainda precisam de relações, serviços e políticas completos antes da exposição.
 
@@ -43,15 +43,19 @@ Não existem dados de demonstração carregados. Os dados fictícios estão some
 - Fichas fiscais oficiais, complementação persistida de CNPJ/grupo/código e regras para exterior.
 - Relatório anual PDF dedicado (disponível impressão para PDF); XLSX/CSV anuais por ficha (exportação atual é de operações).
 - Importação de notas PDF, conciliação com extratos, documentos e investigação avançada de duplicidade.
-- MFA, recuperação de senha, verificação de e-mail, exclusão/portabilidade completa LGPD, limitação distribuída de tentativas, monitoramento, backups/restauração e revisão de segurança/dependências.
+- MFA, recuperação de senha, verificação de e-mail, exclusão/portabilidade completa LGPD, limitação distribuída de tentativas, monitoramento, backups/restauração e revisão independente de segurança.
 - Testes fiscais não escritos porque regras oficiais não foram validadas. Testes de isolamento cobrem rotas de operações, não uma auditoria integral de segurança.
 
-A rede deste ambiente bloqueou a Receita Federal e `binaries.prisma.sh` durante a implementação. Não se presume que exemplos financeiros validem regras tributárias.
+A documentação oficial da Receita Federal permanece pendente de validação por exercício. Exemplos financeiros não validam regras tributárias.
 
-## Auditoria de dependências
+## Revisão técnica e dependências
 
-`npm audit` identificou avisos em dependências de build (Tailwind/Prisma), no PostCSS transitivo do Next e no uuid transitivo do ExcelJS. Correções restantes exigem análise e/ou atualização principal. O leitor XLSX anterior foi substituído por ExcelJS; a aplicação não é considerada aprovada para produção.
+Veja [o relatório de revisão](docs/revisao-tecnica.md). As dependências foram atualizadas e `npm audit` não apontou vulnerabilidades conhecidas na verificação registrada. Isso não equivale a uma auditoria independente de segurança nem elimina as pendências acima.
 
 ## Hospedagem gratuita para testes
 
 Veja [Vercel + Neon](docs/vercel-neon.md). `vercel.json` configura geração do cliente, migrations e build. Use banco separado por ambiente; confira limites e condições dos planos gratuitos. Deploy remoto ainda não validado.
+
+## Diagnóstico de publicação
+
+O build da Vercel executa `config:check`, geração do Prisma, migrations e `db:check` antes da compilação. Ele verifica a conexão usada pela aplicação, incluindo as tabelas, e rejeita URLs de projetos Neon diferentes. `/api/health` também verifica as tabelas, sem consultar registros pessoais. Falhas retornam códigos seguros como `DATABASE_CONFIGURATION`, `DATABASE_SCHEMA`, `DATABASE_AUTHENTICATION`, `DATABASE_TLS` e `DATABASE_UNAVAILABLE`. Nunca cole URLs com senha em issues ou logs.

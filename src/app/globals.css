@@ -1,2 +1,86 @@
-@tailwind base;@tailwind components;@tailwind utilities;
-:root{color-scheme:light}*{box-sizing:border-box}body{margin:0;background:#f7f9fc;color:#15233e;font-family:Arial,Helvetica,sans-serif}input,select{width:100%;border:1px solid #dce3ed;background:white;border-radius:9px;padding:10px 12px;color:#15233e}label{font-size:12px;color:#63718a;display:block}button,a,input,select{outline-offset:3px}button{cursor:pointer} .card{background:white;border:1px solid #e5eaf2;border-radius:16px;padding:24px;box-shadow:0 2px 4px #12233b02}.muted{color:#77849a}.dark body,.dark{background:#0e1628;color:#e8eef9}.dark .card,.dark aside,.dark header{background:#152139!important;border-color:#2b3b55!important}.dark input,.dark select{background:#17253d;color:#e8eef9;border-color:#35445c}.dark .bg-white{background:#152139}.dark .text-slate-800{color:#e8eef9}@media print{aside,header,button,.no-print{display:none!important}main{margin:0!important;padding:0!important}.card{break-inside:avoid;box-shadow:none}} 
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+:root {
+  color-scheme: light;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  background: #f7f9fc;
+  color: #15233e;
+  font-family: Arial, Helvetica, sans-serif;
+}
+input,
+select {
+  width: 100%;
+  border: 1px solid #dce3ed;
+  background: white;
+  border-radius: 9px;
+  padding: 10px 12px;
+  color: #15233e;
+}
+label {
+  font-size: 12px;
+  color: #63718a;
+  display: block;
+}
+button,
+a,
+input,
+select {
+  outline-offset: 3px;
+}
+button {
+  cursor: pointer;
+}
+.card {
+  background: white;
+  border: 1px solid #e5eaf2;
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 2px 4px #12233b02;
+}
+.muted {
+  color: #77849a;
+}
+.dark body,
+.dark {
+  background: #0e1628;
+  color: #e8eef9;
+}
+.dark .card,
+.dark aside,
+.dark header {
+  background: #152139 !important;
+  border-color: #2b3b55 !important;
+}
+.dark input,
+.dark select {
+  background: #17253d;
+  color: #e8eef9;
+  border-color: #35445c;
+}
+.dark .bg-white {
+  background: #152139;
+}
+.dark .text-slate-800 {
+  color: #e8eef9;
+}
+@media print {
+  aside,
+  header,
+  button,
+  .no-print {
+    display: none !important;
+  }
+  main {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .card {
+    break-inside: avoid;
+    box-shadow: none;
+  }
+}
