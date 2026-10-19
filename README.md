@@ -39,7 +39,7 @@ Não existem dados de demonstração carregados. Os dados fictícios estão some
 
 - Motor fiscal validado por exercício e classe, impostos, isenções, prejuízos, IRRF, DARF e fontes oficiais verificadas. Nenhum imposto é calculado nesta versão.
 - Pareamento day trade e eventos corporativos na carteira (há apenas utilitário de desdobramento testado). Resultado financeiro agregado não é resultado fiscal.
-- Cadastro de proventos, fontes pagadoras, cotações, evolução patrimonial completa e rentabilidade.
+- Cadastro de proventos, fontes pagadoras, evolução patrimonial completa, rentabilidade total com fluxos de caixa confirmados e fonte de cotações com contrato/SLA. Os novos quadros usam fontes públicas e retorno indicativo, conforme docs/mercado.md.
 - Fichas fiscais oficiais, complementação persistida de CNPJ/grupo/código e regras para exterior.
 - Relatório anual PDF dedicado (disponível impressão para PDF); XLSX/CSV anuais por ficha (exportação atual é de operações).
 - Importação de notas PDF, conciliação com extratos, documentos e investigação avançada de duplicidade.
@@ -59,3 +59,7 @@ Veja [Vercel + Neon](docs/vercel-neon.md). `vercel.json` configura geração do 
 ## Diagnóstico de publicação
 
 O build da Vercel executa `config:check`, geração do Prisma, migrations e `db:check` antes da compilação. Ele verifica a conexão usada pela aplicação, incluindo as tabelas, e rejeita URLs de projetos Neon diferentes. `/api/health` também verifica as tabelas, sem consultar registros pessoais. Falhas retornam códigos seguros como `DATABASE_CONFIGURATION`, `DATABASE_SCHEMA`, `DATABASE_AUTHENTICATION`, `DATABASE_TLS` e `DATABASE_UNAVAILABLE`. Nunca cole URLs com senha em issues ou logs.
+
+## Quadros de mercado
+
+O dashboard inclui índices BR/EUA, cotações dos ativos com janela ampliada, comparação indicativa de retorno e manchetes de quatro portais. Consulte [fontes, metodologia e limites](docs/mercado.md). Fontes externas não foram validadas ao vivo neste ambiente devido ao bloqueio de rede; ausências são sinalizadas sem dados fictícios.

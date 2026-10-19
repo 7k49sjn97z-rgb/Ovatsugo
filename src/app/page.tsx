@@ -37,6 +37,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { FinancialDecimal as Decimal } from "@/lib/finance";
+import { MarketDashboard } from "@/components/market/dashboard";
 import { Importer } from "@/components/importer";
 import { Button } from "@/components/ui/button";
 import { interpreter, operationSchema, OperationInput } from "@/lib/parser";
@@ -52,6 +53,7 @@ type Op = Trade & {
   broker: string;
   assetClass: string;
   modality: string;
+  updatedAt?: string;
 };
 const sections = [
   { name: "Dashboard", icon: LayoutDashboard },
@@ -671,6 +673,16 @@ export default function Home() {
                   </div>
                 ))}
               </div>
+              <MarketDashboard
+                from={from}
+                to={to}
+                revision={ops
+                  .map(
+                    (o) =>
+                      `${o.id}:${o.updatedAt ?? o.createdAt ?? ""}:${o.canceled}`,
+                  )
+                  .join("|")}
+              />
               <div className="grid xl:grid-cols-3 gap-6 mb-6">
                 <section className="card xl:col-span-2">
                   <div className="flex justify-between">
@@ -681,7 +693,7 @@ export default function Home() {
                       </p>
                     </div>
                     <span className="text-xs rounded-lg bg-slate-100 text-slate-500 p-2 h-fit">
-                      Sem cotações ao vivo
+                      Visão por custo de aquisição
                     </span>
                   </div>
                   {holdings.length ? (
@@ -725,7 +737,8 @@ export default function Home() {
                   <p className="text-xs muted border-t pt-4 mt-3">
                     Posições consolidadas entre instituições. O filtro de
                     instituição aplica-se às operações e ao resultado realizado.
-                    Valor de mercado e rentabilidade indisponíveis sem cotações.
+                    Cotações e comparação estimada aparecem nos quadros de
+                    mercado acima.
                   </p>
                 </section>
                 <section className="card">
